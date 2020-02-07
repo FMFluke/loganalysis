@@ -1,0 +1,42 @@
+Notes:
+
+- Thermal test 20171020_183001__fullBrickBurnIn: divided to cycles and each cycle with steps
+- File saved at end of each steps if done
+- In cycle 1 step 3, Initialize 6 bricks
+- step 4 has errors and never complete (it change state from ColdStart to MinPwr)
+- step 5 Initialize 6 bricks again, and it skips to step 7
+- the steps that follow are repeatedly checking something about ADC reading and temperature of plate for each brick
+- In step 161, state change to Off and system is power off
+- Steps after this just do nothing except print state Off
+- In step 281, system tried to power on (state changed to ColdStart) and initialize 6 bricks, but some errors happen
+- After some repeated tries, it complete step 281.
+- Some error happen again, and the next step done is 285 (reading in ColdStart state), then repeat reading
+- In step 301 it change from ColdStart to FullPwr5Vref, but that caused errors.
+- When errors happen it re-Initialize 6 bricks, but the state is kept (does not go back to MinPwr)
+- step 303 Initialize 6 bricks, and then skip to step 305
+- then starts checking/reading again
+- step 721 changed back to MinPwr, then reading again, changed to off in step 781
+- step 901 changed to ColdStart, errors happen, done after some retry
+- Some error happen again, and the next step done is 904 (reading in ColdStart state), then repeat reading (same as earlier state change)
+- step 921 changed to FullPwr5Vref, then read in this state (no exception errors this time)
+- step 1341 changed to MinPwr, then read in this state (no exception errors this time)
+- step 1401 changed to Off
+- step 1521 changed to ColdStart, initialize 6 bricks.
+- step 1541 to FullPwr5Vref, step 1961 to MinPwr, step 2021 to Off
+- step 2141 to ColdStart (one hour off)
+- step 2161 to FullPwr5Vref, step 2581 to MinPwr, step 2641 to Off
+- step 2761 to ColdStart (one hour off)
+- step 2781 to FullPwr5Vref, step 2581 to MinPwr, step 2641 to Off
+- After some repeated above, it go back to some errors, paused stages, etc...
+
+Structures:
+- DP:ELT Timestamp - TYPE - Module?? - log message
+- TYPE: INFO, WARNING, ERROR
+- Modules:
+    - Microgate.instruments.climateChamber - Step start and done, sometimes WARNING
+    - __main__ - States, State changed, reading checks
+    - Microgate.utils.testing - For 'Saved file'
+    - Microgate.adopt.MGP - Welcome to Microgate TCP/MGP server messages
+    - Microgate.adopt.AOSupport - looks like some initialization
+- Traceback is printed when some stopping error raised, but seems to retry immediately
+- looks also similar in other files
